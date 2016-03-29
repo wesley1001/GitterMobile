@@ -10,6 +10,7 @@ import {init} from '../modules/app'
 import {connect} from 'react-redux'
 import * as Navigation from '../modules/navigation'
 import {selectRoom} from '../modules/rooms'
+import {changeRoomInfoDrawerState} from '../modules/ui'
 
 import LaunchScreen from './LaunchScreen'
 import LoginScreen from './LoginScreen'
@@ -20,6 +21,8 @@ import RoomScreen from './RoomScreen'
 import SearchScreen from './SearchScreen'
 import UserScreen from './UserScreen'
 import Drawer from './Drawer'
+import RoomUsersScreen from './RoomUsersScreen'
+import RoomUserAddScreen from './RoomUserAddScreen'
 
 // this need for passing navigator instance to navigation module
 export let nav
@@ -53,11 +56,11 @@ class App extends Component {
 
       if (history.length > 1) {
         // set active room previous room
-        // if (prevision.name === 'room') {
-        //   dispatch(selectRoom(prevision.roomId))
-        // } else {
-        dispatch(selectRoom(''))
-        // }
+        if (prevision.name === 'room') {
+          dispatch(selectRoom(prevision.roomId))
+        } else {
+          dispatch(selectRoom(''))
+        }
         dispatch(Navigation.goBack())
         return true
       }
@@ -94,6 +97,8 @@ class App extends Component {
     setTimeout(() => {
       if (current.name === 'room' && route.name === 'room') {
         dispatch(Navigation.goAndReplace(route))
+      } else if (route.name === 'room') {
+        dispatch(Navigation.resetWithStack([{name: 'home'}, route]))
       } else {
         dispatch(Navigation.goTo(route))
       }
@@ -139,18 +144,33 @@ class App extends Component {
     case 'room':
       return (
         <RoomScreen
+          route={route}
           navigateTo={this.navigateTo}
           onMenuTap={this.onMenuTap.bind(this)} />
       )
     case 'user':
       return (
-        <UserScreen />
+        <UserScreen
+          route={route} />
       )
 
     case 'search':
       return (
         <SearchScreen />
       )
+
+    case 'roomUsers':
+      return (
+        <RoomUsersScreen
+          route={route} />
+      )
+
+    case 'addUser':
+      return (
+        <RoomUserAddScreen
+          route={route} />
+      )
+
     default:
       return null
     }
@@ -196,12 +216,15 @@ class App extends Component {
 
 App.propTypes = {
   dispatch: PropTypes.func,
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
+  roomInfoDrawerState: PropTypes.string
 }
 
 function mapStateToProps(state) {
+  const {roomInfoDrawerState} = state.ui
   return {
-    navigation: state.navigation
+    navigation: state.navigation,
+    roomInfoDrawerState
   }
 }
 

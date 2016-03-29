@@ -1,6 +1,7 @@
 import React, {
   Component,
   PropTypes,
+  InteractionManager,
   ToolbarAndroid,
   Linking,
   ScrollView,
@@ -8,7 +9,7 @@ import React, {
 } from 'react-native'
 import {connect} from 'react-redux'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
-import s from '../styles/UserScreenStyles'
+import s from '../styles/screens/User/UserScreenStyles'
 import * as Navigation from '../modules/navigation'
 import {getUser, chatPrivately} from '../modules/users'
 
@@ -38,7 +39,9 @@ class UserScreen extends Component {
 
   componentDidMount() {
     const {dispatch, route} = this.props
-    dispatch(getUser(route.username))
+    InteractionManager.runAfterInteractions(() => {
+      dispatch(getUser(route.username))
+    })
   }
 
   handleTabChange({i}) {
@@ -146,7 +149,7 @@ function mapStateToProps(state) {
   return {
     isLoadingUsers,
     currentUserId: id,
-    route: current,
+    // route: current,
     users: state.users.entities
   }
 }

@@ -4,16 +4,16 @@ import React, {
   View,
   Text
 } from 'react-native'
-import s from '../styles/FailedToLoadStyles'
+import s from '../styles/components/FailedToLoadStyles'
 
-const FailedToLoad = ({onPress, message}) => {
+const FailedToLoad = ({onRetry, message}) => {
   return (
     <View style={s.container}>
       <Text style={s.heading}>
         {message}
       </Text>
       <TouchableNativeFeedback
-        onPress={() => onPress()}>
+        onPress={() => onRetry()}>
         <View style={s.button}>
           <Text>Retry</Text>
         </View>

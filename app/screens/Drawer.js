@@ -8,9 +8,9 @@ import {connect} from 'react-redux'
 import {logOut} from '../modules/auth'
 import * as Navigation from '../modules/navigation'
 import {selectRoom, leaveRoom, markAllAsRead} from '../modules/rooms'
-import s from '../styles/DrawerStyles'
-import DrawerUserInfo from '../components/DrawerUserInfo'
-import ChannelList from '../components/ChannelList'
+import s from '../styles/screens/Drawer/DrawerStyles'
+import DrawerUserInfo from '../components/Drawer/DrawerUserInfo'
+import ChannelList from '../components/Drawer/ChannelList'
 import Loading from '../components/Loading'
 
 import {THEMES} from '../constants'
@@ -76,7 +76,7 @@ class Drawer extends Component {
     const {user, ids} = this.props
 
     return (
-      <View style={[s.container, {backgroundColor: colors.gray}]}>
+      <View style={s.container}>
         <DrawerUserInfo {...user} onLogOut={this.onLogOut.bind(this)}/>
         {ids.length === 0
           ? <Loading color={colors.brand} />

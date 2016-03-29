@@ -1,5 +1,6 @@
 import * as Api from '../api/gitter'
 import _ from 'lodash'
+import {ToastAndroid} from 'react-native'
 import normalize from '../utils/normalize'
 import {LOGOUT} from './auth'
 import {subscribeToChatMessages, unsubscribeToChatMessages} from './realtime'
@@ -34,6 +35,9 @@ export const MARK_ALL_AS_READ_OK = 'rooms/MARK_ALL_AS_READ_OK'
 export const MARK_ALL_AS_READ_FAILED = 'rooms/MARK_ALL_AS_READ_FAILED'
 export const CHANGE_FAVORITE_STATUS_OK = 'rooms/CHANGE_FAVORITE_STATUS_OK'
 export const CHANGE_FAVORITE_STATUS_FAILED = 'rooms/CHANGE_FAVORITE_STATUS_FAILED'
+export const ADD_USER_TO_ROOM = 'rooms/ADD_USER_TO_ROOM'
+export const ADD_USER_TO_ROOM_OK = 'rooms/ADD_USER_TO_ROOM_OK'
+export const ADD_USER_TO_ROOM_ERROR = 'rooms/ADD_USER_TO_ROOM_ERROR'
 
 /**
  * Action Creators
@@ -225,6 +229,26 @@ export function changeFavoriteStatus(roomId) {
   }
 }
 
+export function addUserToRoom(roomId, username) {
+  return async (dispatch, getState) => {
+    const {token} = getState().auth
+
+    dispatch({type: ADD_USER_TO_ROOM, roomId, username})
+    try {
+      const payload = await Api.addUserToRoom(token, roomId, username)
+      if (!!payload.success && payload.success === true) {
+        dispatch({type: ADD_USER_TO_ROOM_OK, payload})
+        ToastAndroid.show(`User ${username} was added.`, ToastAndroid.SHORT)
+      } else {
+        dispatch({type: ADD_USER_TO_ROOM_ERROR, error: payload})
+        ToastAndroid.show(`User ${username} wasn't added.`, ToastAndroid.SHORT)
+      }
+    } catch (error) {
+      dispatch({type: ADD_USER_TO_ROOM_ERROR, error})
+    }
+  }
+}
+
 /**
  * Reducer
  */
@@ -250,7 +274,8 @@ export default function rooms(state = initialState, action) {
   }
 
   case CURRENT_USER_ROOMS_RECEIVED: {
-    const normalized = normalize(action.payload)
+    const sorted = action.payload.sort((item1, item2) => Date.parse(item2.lastAccessTime) - Date.parse(item1.lastAccessTime))
+    const normalized = normalize(sorted)
     return {...state,
       isLoading: false,
       ids: state.ids.concat(normalized.ids),

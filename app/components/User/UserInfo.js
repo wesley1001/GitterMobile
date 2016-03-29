@@ -4,7 +4,7 @@ import React, {
   Image,
   Text
 } from 'react-native'
-import s from '../../styles/UserInfoStyles'
+import s from '../../styles/screens/User/UserInfoStyles'
 import Button from '../Button'
 
 
@@ -17,7 +17,9 @@ const UserInfo = ({id, company, location, email, profile, has_gitter_login,
           <Image
             source={require('image!ic_location_on_black_24dp')}
             style={s.icon} />
-          <Text style={s.text}>{location}</Text>
+          <View style={s.textWrapper}>
+            <Text style={s.text}>{location}</Text>
+          </View>
         </View>
       )}
       {!!company && (
@@ -25,7 +27,9 @@ const UserInfo = ({id, company, location, email, profile, has_gitter_login,
           <Image
             source={require('image!ic_business_black_24dp')}
             style={s.icon} />
-          <Text style={s.text}>{company}</Text>
+          <View style={s.textWrapper}>
+            <Text style={s.text}>{company}</Text>
+          </View>
         </View>
       )}
       {!!email && (
@@ -58,7 +62,7 @@ const UserInfo = ({id, company, location, email, profile, has_gitter_login,
             styles={[s.button, s.chatPrivately]}
             onPress={() => onChatPrivatelyPress(id)}>
             <Image
-              source={require('image!ic_email_black_24dp')}
+              source={require('image!ic_textsms_black_24dp')}
               style={s.icon} />
             <Text style={s.text}>Chat privately</Text>
           </Button>
